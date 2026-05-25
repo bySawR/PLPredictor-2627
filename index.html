@@ -161,27 +161,27 @@ body{background:#1a0020;min-height:100vh;display:flex;flex-direction:column;alig
       <div class="extras-header">Season Awards</div>
       <div class="extra-card">
         <label>Golden Boot</label>
-        <input id="e1" type="text" placeholder="Player name" autocomplete="off"/>
+        <input id="e1" type="text" placeholder="Haaland" autocomplete="off"/>
       </div>
       <div class="extra-card">
         <label>Best Signing</label>
-        <input id="e2" type="text" placeholder="Player name" autocomplete="off"/>
+        <input id="e2" type="text" placeholder="Mbappe" autocomplete="off"/>
       </div>
       <div class="extra-card">
         <label>Worst Signing</label>
-        <input id="e3" type="text" placeholder="Player name" autocomplete="off"/>
+        <input id="e3" type="text" placeholder="Ederson" autocomplete="off"/>
       </div>
       <div class="extra-card">
         <label>Biggest Flop</label>
-        <input id="e4" type="text" placeholder="Player name" autocomplete="off"/>
+        <input id="e4" type="text" placeholder="Mbappe" autocomplete="off"/>
       </div>
       <div class="extra-card">
         <label>Most Aura</label>
-        <input id="e5" type="text" placeholder="Player name" autocomplete="off"/>
+        <input id="e5" type="text" placeholder="Saka" autocomplete="off"/>
       </div>
       <div class="extra-card">
         <label>Gayest Player</label>
-        <input id="e6" type="text" placeholder="Player name" autocomplete="off"/>
+        <input id="e6" type="text" placeholder="Lammens" autocomplete="off"/>
       </div>
       <div class="extras-header" style="margin-top:10px;">Cups</div>
       <div class="cup-card" id="cup-fa">
@@ -300,15 +300,29 @@ function render(){
 }
 
 // ─── EXPORT ───────────────────────────────────────────────────────────────────
+function titleCase(value){
+  return value.trim().split(/\s+/).filter(Boolean).map(word => word[0].toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+}
+function attachAwardNormalization(){
+  ['e1','e2','e3','e4','e5','e6'].forEach(id => {
+    const input = document.getElementById(id);
+    if (!input) return;
+    const normalize = () => { input.value = titleCase(input.value); };
+    input.addEventListener('blur', normalize);
+    input.addEventListener('paste', () => setTimeout(normalize, 0));
+  });
+}
+attachAwardNormalization();
+
 document.getElementById('export-btn').addEventListener('click', async ()=>{
   const nameVal=document.getElementById('name-input').value||'Prediction';
   const extras=[
-    {label:'Golden Boot',   val:document.getElementById('e1').value||'—'},
-    {label:'Best Signing',  val:document.getElementById('e2').value||'—'},
-    {label:'Worst Signing', val:document.getElementById('e3').value||'—'},
-    {label:'Biggest Flop',  val:document.getElementById('e4').value||'—'},
-    {label:'Most Aura',     val:document.getElementById('e5').value||'—'},
-    {label:'Gayest Player', val:document.getElementById('e6').value||'—'},
+    {label:'Golden Boot',   val:titleCase(document.getElementById('e1').value)||'—'},
+    {label:'Best Signing',  val:titleCase(document.getElementById('e2').value)||'—'},
+    {label:'Worst Signing', val:titleCase(document.getElementById('e3').value)||'—'},
+    {label:'Biggest Flop',  val:titleCase(document.getElementById('e4').value)||'—'},
+    {label:'Most Aura',     val:titleCase(document.getElementById('e5').value)||'—'},
+    {label:'Gayest Player', val:titleCase(document.getElementById('e6').value)||'—'},
   ];
   const cups=[
     {label:'FA Cup', val:document.getElementById('c-fa').value||'—', logoId:'fa'},
