@@ -72,6 +72,7 @@ body{background:#1a0020;min-height:100vh;display:flex;flex-direction:column;alig
   border-bottom:1px solid rgba(0,255,133,0.25);padding-bottom:8px;margin-bottom:8px;
 }
 .extra-card{
+  position:relative;
   background:rgba(255,255,255,0.05);
   padding:10px 12px 12px 14px;
   border-left:3px solid #00ff85;
@@ -175,6 +176,12 @@ body{background:#1a0020;min-height:100vh;display:flex;flex-direction:column;alig
         <label>Biggest Flop</label>
         <input id="e4" type="text" placeholder="Mbappe" autocomplete="off"/>
       </div>
+            <div class="extra-card">
+        <label>First Manager Sacked</label>
+        <input id="e7" type="text" placeholder="Team name" autocomplete="off"/>
+        <div class="ac-dropdown" id="ac-e7" style="display:none;"></div>
+      </div>
+            <div class="extras-header" style="margin-top:10px;">Memes</div>
       <div class="extra-card">
         <label>Most Aura</label>
         <input id="e5" type="text" placeholder="Saka" autocomplete="off"/>
@@ -206,10 +213,10 @@ body{background:#1a0020;min-height:100vh;display:flex;flex-direction:column;alig
           <div class="ac-dropdown" id="ac-cb" style="display:none;"></div>
         </div>
       </div>
+
+      <button id="export-btn">Save as Image</button>
     </div>
   </div>
-
-  <button id="export-btn">Save as Image</button>
 </div>
 
 <script>
@@ -304,7 +311,7 @@ function titleCase(value){
   return value.trim().split(/\s+/).filter(Boolean).map(word => word[0].toUpperCase() + word.slice(1).toLowerCase()).join(' ');
 }
 function attachAwardNormalization(){
-  ['e1','e2','e3','e4','e5','e6'].forEach(id => {
+  ['name-input','e1','e2','e3','e4','e5','e6'].forEach(id => {
     const input = document.getElementById(id);
     if (!input) return;
     const normalize = () => { input.value = titleCase(input.value); };
@@ -315,7 +322,7 @@ function attachAwardNormalization(){
 attachAwardNormalization();
 
 document.getElementById('export-btn').addEventListener('click', async ()=>{
-  const nameVal=document.getElementById('name-input').value||'Prediction';
+  const nameVal=titleCase(document.getElementById('name-input').value)||'Prediction';
   const extras=[
     {label:'Golden Boot',   val:titleCase(document.getElementById('e1').value)||'—'},
     {label:'Best Signing',  val:titleCase(document.getElementById('e2').value)||'—'},
@@ -493,7 +500,7 @@ document.getElementById('export-btn').addEventListener('click', async ()=>{
 function setupCupAutocomplete(inputId, dropId, badgeId) {
   const input = document.getElementById(inputId);
   const drop = document.getElementById(dropId);
-  const badge = document.getElementById(badgeId);
+  const badge = badgeId ? document.getElementById(badgeId) : null;
   let activeIdx = -1;
   let selectedTeam = null;
 
@@ -506,17 +513,18 @@ function setupCupAutocomplete(inputId, dropId, badgeId) {
   function selectTeam(t) {
     selectedTeam = t;
     input.value = t.name;
-    const src = REAL_LOGOS[t.id] || '';
-    badge.src = src;
-    badge.style.display = src ? 'block' : 'none';
+    if (badge) {
+      const src = REAL_LOGOS[t.id] || '';
+      badge.src = src;
+      badge.style.display = src ? 'block' : 'none';
+    }
     drop.style.display = 'none';
   }
 
   function clearBadge() {
-    // only clear badge if typed text doesn't match selected team
     if (selectedTeam && input.value.toLowerCase() !== selectedTeam.name.toLowerCase()) {
       selectedTeam = null;
-      badge.style.display = 'none';
+      if (badge) badge.style.display = 'none';
     }
   }
 
@@ -554,6 +562,7 @@ function setupCupAutocomplete(inputId, dropId, badgeId) {
 
 setupCupAutocomplete('c-fa', 'ac-fa', 'badge-fa');
 setupCupAutocomplete('c-cb', 'ac-cb', 'badge-cb');
+setupCupAutocomplete('e7', 'ac-e7');
 
 render();
 </script>
